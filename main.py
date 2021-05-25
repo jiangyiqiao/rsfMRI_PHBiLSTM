@@ -1,4 +1,3 @@
-import os
 import argparse
 import scipy.io
 import numpy as np
