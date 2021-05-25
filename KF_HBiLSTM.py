@@ -1,22 +1,20 @@
 import os
-import scipy.io
-from sklearn import preprocessing
-from sklearn.model_selection import StratifiedKFold
 import math
-import tensorflow as tf
-from keras.layers import *
-from sklearn.metrics import confusion_matrix
-from sklearn import metrics
+import scipy.io
 from numpy.random import seed
+from sklearn import preprocessing, metrics
+from sklearn.model_selection import StratifiedKFold
+from sklearn.metrics import confusion_matrix
+import tensorflow as tf
+from tensorflow import set_random_seed
+from keras.layers import *
 
 seed(1)
-from tensorflow import set_random_seed
-
 set_random_seed(2)
 
 
 class HBiLSTM(object):
-    def __init__(self, x_train, y_train, x_test, y_test,  n_classes, featureNum):
+    def __init__(self, x_train, y_train, x_test, y_test, n_classes, featureNum):
         self.n_classes = n_classes
         self.featureNum = featureNum
         self.x_train = x_train
@@ -42,7 +40,6 @@ class HBiLSTM(object):
 
         hidden_size = 64
 
-
         sess = tf.Session()
         K.set_session(sess)
 
@@ -59,7 +56,6 @@ class HBiLSTM(object):
             LSTM(hidden_size, return_sequences=True))(fc_out)
         bilstm_2 = Bidirectional(
             LSTM(hidden_size, return_sequences=True))(bilstm_1)
-
 
         bi_out = Flatten()(bilstm_2)  # 特征扁平化
         # 最后一层全连接层
@@ -116,7 +112,7 @@ class HBiLSTM(object):
                 print("Training Loss = {}".format(train_loss))
                 if epoch == epochs - 1 or (
                         acc == 100 and np.mean(train_losses[-2]) - np.mean(train_losses[-1]) <= 0.05) or math.isnan(
-                        train_loss):
+                    train_loss):
                     test_acc, props = sess.run([accuracy, pred], feed_dict={x: self.x_test, y: self.y_test, })
                     # 计算其他指标
                     test_acc = 100 * test_acc
@@ -127,29 +123,24 @@ class HBiLSTM(object):
                     auc = metrics.roc_auc_score(self.y_test, props, average="weighted")
                     #
                     print("Test ACC,SEN,SPE,Fscore,AUC:\n{}% {}% {}% {}% {}".format(test_acc,
-                                                                                     sensitivity,
-                                                                                     specificity,f_score,auc
-                                                                                     ))
+                                                                                    sensitivity,
+                                                                                    specificity, f_score, auc
+                                                                                    ))
                     print(tn, fp, fn, tp)
 
-
-                    return test_acc, sensitivity,specificity,f_score,auc
-
-
-
+                    return test_acc, sensitivity, specificity, f_score, auc
 
 
 if __name__ == '__main__':
-
 
     featureNum = 161
     lamda = 0.01
     n_classes = 2
     kalman = '0.1'
 
-
     Folder_Original_Data = 'data'
-    Featurefile = Folder_Original_Data + '/features/' + 'kalmancorr_' + str(lamda) + '_' + kalman + '_' + str(featureNum) + '.mat'
+    Featurefile = Folder_Original_Data + '/features/' + 'kalmancorr_' + str(lamda) + '_' + kalman + '_' + str(
+        featureNum) + '.mat'
 
     print(os.path.join(Featurefile))
 
@@ -167,7 +158,7 @@ if __name__ == '__main__':
         for j in range(X.shape[1]):
             X[i][j] = preprocessing.scale(X[i][j])
 
-    labels = np.array([0 if corr[i][3] == -1 else 1for i in range(sample_nums)],dtype=np.int32)
+    labels = np.array([0 if corr[i][3] == -1 else 1 for i in range(sample_nums)], dtype=np.int32)
 
     kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=1)
 
@@ -187,7 +178,6 @@ if __name__ == '__main__':
         #     continue
         # #
 
-
         networks = HBiLSTM(X_train, Y_train, X_test, Y_test, n_classes, featureNum)
         test_acc, sensitivity, specificity, f_score, auc = networks.hbilstm()
 
@@ -202,6 +192,5 @@ if __name__ == '__main__':
         test_kflodCount += 1
     print(
         'parameter of lamda:{}, kalman:{}, 5-fold mean of Test accuracy, sensitivity, specificity, f1_score, AUC_score:\n{}% {}% {}% {}% {}'.format(
-            lamda, kalman, np.mean(test_accs), np.mean(sensitivitys), np.mean(specificitys), np.mean(f_scores),np.mean(aucs)))
-
-
+            lamda, kalman, np.mean(test_accs), np.mean(sensitivitys), np.mean(specificitys), np.mean(f_scores),
+            np.mean(aucs)))
