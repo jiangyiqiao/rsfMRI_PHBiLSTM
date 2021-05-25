@@ -1,3 +1,4 @@
+# Adaptive Functional Connectivity Network Using Parallel Hierarchical BiLSTM for MCI Diagnosis
 ## PH-BiLSTM
 
 ### Procedure Code Introduction

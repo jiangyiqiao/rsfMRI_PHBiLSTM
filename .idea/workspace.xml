@@ -2,9 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1c770c54-b518-457c-bc95-9bff6c5bc86d" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/KF_BiLSTM.py" beforeDir="false" afterPath="$PROJECT_DIR$/KF_BiLSTM.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/KF_HBiLSTM.py" beforeDir="false" afterPath="$PROJECT_DIR$/KF_HBiLSTM.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/KF_PHBiLSTM.py" beforeDir="false" afterPath="$PROJECT_DIR$/KF_PHBiLSTM.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -15,26 +12,14 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="284">
-                <caret line="23" column="5" selection-start-line="23" selection-start-column="5" selection-end-line="23" selection-end-column="5" />
+              <first_editor>
+                <caret column="2" selection-start-column="2" selection-end-column="2" />
               </first_editor>
               <second_editor />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/KF_PHBiLSTM.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="122" column="53" selection-start-line="122" selection-start-column="37" selection-end-line="122" selection-end-column="53" />
-              <folding>
-                <element signature="e#0#9#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -51,10 +36,10 @@
         <option value="$PROJECT_DIR$/SWC_bilstm.py" />
         <option value="$PROJECT_DIR$/SWC_HBiLSTM.py" />
         <option value="$PROJECT_DIR$/SWC_PHBiLSTM.py" />
-        <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/KF_HBiLSTM.py" />
         <option value="$PROJECT_DIR$/KF_BiLSTM.py" />
         <option value="$PROJECT_DIR$/KF_PHBiLSTM.py" />
+        <option value="$PROJECT_DIR$/README.md" />
       </list>
     </option>
   </component>
@@ -259,18 +244,18 @@
       <workItem from="1563129082996" duration="24504000" />
       <workItem from="1563262971921" duration="26759000" />
       <workItem from="1621926700140" duration="594000" />
-      <workItem from="1621927990941" duration="1924000" />
+      <workItem from="1621927990941" duration="2157000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="53821000" />
+    <option name="totallyTimeSpent" value="54054000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="26" y="115" width="1375" height="757" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15978995" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15978995" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -284,7 +269,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5003751" side_tool="true" weight="0.43157893" />
-      <window_info anchor="bottom" id="Terminal" order="11" visible="true" weight="0.14285715" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.40601504" />
       <window_info anchor="bottom" id="Python Console" order="12" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -341,16 +326,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/KF_HBiLSTM.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2346">
-          <caret line="138" column="18" lean-forward="true" selection-start-line="138" selection-start-column="18" selection-end-line="138" selection-end-column="18" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/KF_BiLSTM.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1197">
@@ -361,23 +336,33 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="284">
-            <caret line="23" column="5" selection-start-line="23" selection-start-column="5" selection-end-line="23" selection-end-column="5" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/KF_PHBiLSTM.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="122" column="53" selection-start-line="122" selection-start-column="37" selection-end-line="122" selection-end-column="53" />
+        <state relative-caret-position="-487">
+          <caret line="122" column="34" lean-forward="true" selection-start-line="122" selection-start-column="34" selection-end-line="122" selection-end-column="34" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/KF_HBiLSTM.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="293">
+          <caret line="146" column="40" selection-start-line="146" selection-start-column="40" selection-end-line="146" selection-end-column="40" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor>
+            <caret column="2" selection-start-column="2" selection-end-column="2" />
+          </first_editor>
+          <second_editor />
         </state>
       </provider>
     </entry>
