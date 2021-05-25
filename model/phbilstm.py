@@ -1,20 +1,15 @@
-import os
 import math
-from numpy.random import seed
-import scipy.io
+import numpy as np
 from sklearn import preprocessing, metrics
 from sklearn.metrics import confusion_matrix
-from sklearn.model_selection import StratifiedKFold
+from keras.layers import Dense, Dropout, BatchNormalization, Activation, Bidirectional, LSTM, Flatten, K, concatenate
 import tensorflow as tf
-from keras.layers import *
-
-seed(1)
 from tensorflow import set_random_seed
 
+np.random.seed(1)
 set_random_seed(2)
 
-
-class BiLSTM(object):
+class PHBiLSTM(object):
     def __init__(self, x_train, y_train, x_test, y_test, n_classes, featureNum):
         self.n_classes = n_classes
         self.featureNum = featureNum
@@ -31,7 +26,7 @@ class BiLSTM(object):
         y_ = y_.reshape(len(y_))
         return np.eye(self.n_classes)[np.array(y_, dtype=np.int32)]  # Returns FLOATS
 
-    def bilstm(self):
+    def run(self):
         learning_rate = 10e-4
         lambda_loss_amount = 0.0015
         droup_out = 0.9
@@ -40,6 +35,8 @@ class BiLSTM(object):
         n_input = self.featureNum
 
         hidden_size = 64
+
+        val_acc, sensitivity, specificity, f_score, auc = 0, 0, 0, 0, 0
 
         sess = tf.Session()
         K.set_session(sess)
@@ -53,10 +50,14 @@ class BiLSTM(object):
         fc_batchnorm = BatchNormalization()(fc_dense)
         fc_out = Activation('relu')(fc_batchnorm)
 
-        bilstm = Bidirectional(
+        bilstm_1 = Bidirectional(
+            LSTM(hidden_size, return_sequences=True))(fc_out)
+        bilstm_2 = Bidirectional(
             LSTM(hidden_size, return_sequences=True))(fc_out)
 
-        bi_out = Flatten()(bilstm)  # 特征扁平化
+        bi_out = concatenate([bilstm_1, bilstm_2])
+
+        bi_out = Flatten()(bi_out)  # 特征扁平化
         # 最后一层全连接层
         dense_out = Dense(hidden_size)(bi_out)
         dense_out = Dropout(droup_out)(dense_out)
@@ -129,67 +130,3 @@ class BiLSTM(object):
 
                     return test_acc, sensitivity, specificity, f_score, auc
 
-
-if __name__ == '__main__':
-
-    featureNum = 161
-    lamda = 0.01
-    n_classes = 2
-    kalman = '0.1'
-
-    Folder_Original_Data = 'data'
-    Featurefile = Folder_Original_Data + '/features/' + 'kalmancorr_' + str(lamda) + '_' + kalman + '_' + str(
-        featureNum) + '.mat'
-
-    print(os.path.join(Featurefile))
-
-    datas = scipy.io.loadmat(Featurefile)
-    corr = datas['datas']
-    sample_nums = len(corr)
-
-    X = np.array([np.array(corr[i][0], dtype=np.float32) for i in range(sample_nums)])
-    print(X.shape)
-
-    # 均值-标准差归一化具体公式是(x - mean)/std。
-    # 其含义是：对每一列的数据减去这一列的均值，然后除以这一列数据的标准差。最终得到的数据都在0附近，方差为1。
-
-    for i in range(X.shape[0]):
-        for j in range(X.shape[1]):
-            X[i][j] = preprocessing.scale(X[i][j])
-
-    labels = np.array([0 if corr[i][3] == -1 else 1 for i in range(sample_nums)], dtype=np.int32)
-
-    kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=1)
-
-    test_kflodCount = 1
-    test_accs, sensitivitys, specificitys, f_scores, aucs = [], [], [], [], []
-    for train_idx, test_idx in kf.split(X, labels):
-        # 划分80%训练集，20% 测试集
-        X_train = X[train_idx]
-        X_test = X[test_idx]
-        Y_train = labels[train_idx]
-        Y_test = labels[test_idx]
-
-        print('test_kflodCount', test_kflodCount)
-
-        # if test_kflodCount < 3:
-        #     test_kflodCount += 1
-        #     continue
-        # #
-
-        networks = BiLSTM(X_train, Y_train, X_test, Y_test, n_classes, featureNum)
-        test_acc, sensitivity, specificity, f_score, auc = networks.bilstm()
-
-        test_accs.append(test_acc)
-        sensitivitys.append(sensitivity)
-        specificitys.append(specificity)
-        f_scores.append(f_score)
-        aucs.append(auc)
-
-        print('lamda:{},kalman:{},k:{}'.format(lamda, kalman, test_kflodCount))
-
-        test_kflodCount += 1
-    print(
-        'parameter of lamda:{}, kalman:{}, 5-fold mean of Test accuracy, sensitivity, specificity, f1_score, AUC_score:\n{}% {}% {}% {}% {}'.format(
-            lamda, kalman, np.mean(test_accs), np.mean(sensitivitys), np.mean(specificitys), np.mean(f_scores),
-            np.mean(aucs)))

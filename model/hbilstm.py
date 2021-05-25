@@ -1,24 +1,17 @@
-import os
-import scipy.io
-from sklearn import preprocessing
-from sklearn.model_selection import StratifiedKFold
 import math
-import tensorflow as tf
-from keras.layers import *
+import numpy as np
+from sklearn import preprocessing, metrics
 from sklearn.metrics import confusion_matrix
-from sklearn import metrics
-from numpy.random import seed
-
-seed(1)
+from keras.layers import Dense, Dropout, BatchNormalization, Activation, Bidirectional, LSTM, Flatten
+import tensorflow as tf
 from tensorflow import set_random_seed
 
+np.random.seed(1)
 set_random_seed(2)
 
-
-class HABiLSTM(object):
-    def __init__(self, x_train, y_train, x_test, y_test,  n_classes, n_steps,featureNum):
+class HBiLSTM(object):
+    def __init__(self, x_train, y_train, x_test, y_test, n_classes, featureNum):
         self.n_classes = n_classes
-        self.n_steps = n_steps
         self.featureNum = featureNum
         self.x_train = x_train
         self.x_test = x_test
@@ -33,12 +26,12 @@ class HABiLSTM(object):
         y_ = y_.reshape(len(y_))
         return np.eye(self.n_classes)[np.array(y_, dtype=np.int32)]  # Returns FLOATS
 
-    def hbilstm(self):
+    def run(self):
         learning_rate = 10e-4
         lambda_loss_amount = 0.0015
         droup_out = 0.9
 
-        n_steps = self.n_steps
+        n_steps = 180
         n_input = self.featureNum
 
         hidden_size = 64
@@ -55,11 +48,12 @@ class HABiLSTM(object):
         fc_batchnorm = BatchNormalization()(fc_dense)
         fc_out = Activation('relu')(fc_batchnorm)
 
-
-        bilstm = Bidirectional(
+        bilstm_1 = Bidirectional(
             LSTM(hidden_size, return_sequences=True))(fc_out)
+        bilstm_2 = Bidirectional(
+            LSTM(hidden_size, return_sequences=True))(bilstm_1)
 
-        bi_out = Flatten()(bilstm)  # 特征扁平化
+        bi_out = Flatten()(bilstm_2)  # 特征扁平化
         # 最后一层全连接层
         dense_out = Dense(hidden_size)(bi_out)
         dense_out = Dropout(droup_out)(dense_out)
@@ -114,7 +108,7 @@ class HABiLSTM(object):
                 print("Training Loss = {}".format(train_loss))
                 if epoch == epochs - 1 or (
                         acc == 100 and np.mean(train_losses[-2]) - np.mean(train_losses[-1]) <= 0.05) or math.isnan(
-                        train_loss):
+                    train_loss):
                     test_acc, props = sess.run([accuracy, pred], feed_dict={x: self.x_test, y: self.y_test, })
                     # 计算其他指标
                     test_acc = 100 * test_acc
@@ -125,70 +119,9 @@ class HABiLSTM(object):
                     auc = metrics.roc_auc_score(self.y_test, props, average="weighted")
                     #
                     print("Test ACC,SEN,SPE,Fscore,AUC:\n{}% {}% {}% {}% {}".format(test_acc,
-                                                                                     sensitivity,
-                                                                                     specificity,f_score,auc
-                                                                                     ))
-                    print(tn, fp, fn, tp )
-                    return test_acc, sensitivity,specificity,f_score,auc
+                                                                                    sensitivity,
+                                                                                    specificity, f_score, auc
+                                                                                    ))
+                    print(tn, fp, fn, tp)
 
-
-
-
-
-if __name__ == '__main__':
-    n_classes = 2
-    Featurefile = 'data/features/sliwinCorr_81.mat'
-
-    print(os.path.join(Featurefile))
-
-    datas = scipy.io.loadmat(Featurefile)
-    corr = datas['sliwinData']
-    sample_nums = len(corr)
-
-    X = np.array([np.array(corr[i][0], dtype=np.float32) for i in range(sample_nums)])
-    _,n_steps,featureNum = X.shape
-    print(X.shape)
-
-    # 均值-标准差归一化具体公式是(x - mean)/std。
-    # 其含义是：对每一列的数据减去这一列的均值，然后除以这一列数据的标准差。最终得到的数据都在0附近，方差为1。
-
-    for i in range(X.shape[0]):
-        for j in range(X.shape[1]):
-            X[i][j] = preprocessing.scale(X[i][j])
-
-    labels = np.array([0 if corr[i][3] == -1 else 1for i in range(sample_nums)],dtype=np.int32)
-
-    kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=1)
-
-    test_kflodCount = 1
-    test_accs, sensitivitys, specificitys, f_scores, aucs = [], [], [], [], []
-    for train_idx, test_idx in kf.split(X, labels):
-        # 划分80%训练集，20% 测试集
-        X_train = X[train_idx]
-        X_test = X[test_idx]
-        Y_train = labels[train_idx]
-        Y_test = labels[test_idx]
-        print(Y_test)
-
-        print('test_kflodCount', test_kflodCount)
-
-        # if test_kflodCount < 3:
-        #     test_kflodCount += 1
-        #     continue
-        #
-
-        networks = HABiLSTM(X_train, Y_train, X_test, Y_test, n_classes, n_steps,featureNum)
-        test_acc, sensitivity, specificity, f_score, auc = networks.hbilstm()
-
-        test_accs.append(test_acc)
-        sensitivitys.append(sensitivity)
-        specificitys.append(specificity)
-        f_scores.append(f_score)
-        aucs.append(auc)
-
-
-        test_kflodCount += 1
-    print(
-        'Sliding Window 5-fold mean of Test accuracy, sensitivity, specificity, f1_score, AUC_score:\n{}% {}% {}% {}% {}'.format(np.mean(test_accs), np.mean(sensitivitys), np.mean(specificitys), np.mean(f_scores),np.mean(aucs)))
-
-
+                    return test_acc, sensitivity, specificity, f_score, auc
